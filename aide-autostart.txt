@@ -1,0 +1,10 @@
+$ cd /etc/xdg/autostart/
+$ sudo leafpad chaudiere.desktop
+
+[Desktop Entry]
+Type=Application
+Name=JavaApplication
+Exec=java -Djava.library.path=/usr/lib/jni -jar /home/pi/NetBeansProjects/ChaudiereGVB7_Swing/dist/ChaudiereGVB7_Swing.jar
+
+
+$ sudo chmod 755 chaudiere.desktop
