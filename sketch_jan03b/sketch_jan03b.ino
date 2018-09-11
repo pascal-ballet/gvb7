@@ -96,7 +96,7 @@ void LireCapteurs() {
 
 void setup() {
   // Attendre le boot du Raspberry
-  delay(15*1000); // 15 sec
+  delay(25*1000); // 25 sec
   // Affectation des Output
   pinMode(ELECTRO_VANNE,            OUTPUT);
   pinMode(ALLUMEUR,                 OUTPUT);
@@ -216,20 +216,37 @@ void loop() {
         Temps_Allumage = millis();
         // Relais
         delay(500);
-        digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
-        delay(500); // Atente avant re-armement relais tempo
         //digitalWrite(ALLUMEUR,       LOW); // Fin lancement relais ALLUMEUR (mais dure 10 sec)
-        delay(1000);
+        //delay(1000);
         digitalWrite(ELECTRO_VANNE,       LOW); // Ouverture Electrovanne GAZ
-        delay(1000);
+        delay(300);
         digitalWrite(ELECTRO_MODULATEUR,  HIGH); // Lancement Relais Electromodulateur GAZ
         delay(500); // Attente avant re armement relais temporise
         digitalWrite(ELECTRO_MODULATEUR,  LOW); // FIN Lancement Relais Electromodulateur GAZ
-        delay(1000); // Attente avant test flamme
+        
+        delay(200); // Attente entree gaz dans chaudiere
+
+        digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+        delay(300); // Etincelles
+        digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+        delay(400); // Repos allumeur
+        
+        digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+        delay(300); // Etincelles
+        digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+        delay(400); // Repos allumeur
+        
+        digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+        delay(300); // Etincelles
+        digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+        delay(400); // Repos allumeur
+                
+        
+        delay(500); // Attente avant test flamme
       }
     
       // TEST ALLUMAGE
-      if( Etat_Chaudiere == CHAUDIERE_ALLUMAGE && (millis() - Temps_Allumage) > 5*1000 ) { // 5 sec pour que les flammes apparaissent
+      if( Etat_Chaudiere == CHAUDIERE_ALLUMAGE && (millis() - Temps_Allumage) > 2*1000 ) { // 2 sec pour que les flammes apparaissent
         AfficherEtat("Test Allumage");
         for(int i=0; i<5; i++) {
            Val_Capt_Flamme = analogRead(A0);
@@ -369,7 +386,7 @@ void loop() {
   }
   //Serial.print("ETAT = ");   Serial.println(Etat_Chaudiere);
   //Serial.print("Flamme = "); Serial.println(Val_Capt_Flamme);
-  delay(1000);
+  delay(500);
   
 }
 
