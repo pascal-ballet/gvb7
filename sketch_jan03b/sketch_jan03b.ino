@@ -95,8 +95,9 @@ void LireCapteurs() {
 //}
 
 void setup() {
+  
   // Attendre le boot du Raspberry
-  delay(25*1000); // 25 sec
+  //delay(25*1000); // 25 sec
   // Affectation des Output
   pinMode(ELECTRO_VANNE,            OUTPUT);
   pinMode(ALLUMEUR,                 OUTPUT);
@@ -125,7 +126,22 @@ void setup() {
   // DEBUG
   //Etat_Chaudiere = CHAUDIERE_ON_CHAUFFE;  Temps_Chauffe = millis() - 240000;
   AfficherEtat("Lancement");
-  delay(3000); // 3 secondes pour que les moteurs se lancent
+  
+  // Debloque allumeur
+  /*for(int allum=0;allum < 30; allum++) {
+    digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+    delay(110); // Etincelles
+    digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+    delay(110); // Repos allumeur
+  }*/
+    digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+    delay(1000); // Etincelles
+    digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+    //delay(150-allum+10); // Repos allumeur
+  
+  
+  
+  delay(30000); // 30 secondes pour que le Rapbery boot
 
   // temps au lancement
   Temps_Init = millis();
@@ -236,12 +252,16 @@ void loop() {
         digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
         delay(400); // Repos allumeur
         
-        digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+        /*digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
         delay(300); // Etincelles
         digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
         delay(400); // Repos allumeur
                 
-        
+        digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+        delay(300); // Etincelles
+        digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+        delay(400); // Repos allumeur
+        */              
         delay(500); // Attente avant test flamme
       }
     
@@ -265,13 +285,22 @@ void loop() {
           Temperature_Init = Val_Capt_Temperature_Eau;
 
           // FIN ALLUMAGE
-          digitalWrite(ALLUMEUR,       HIGH); // SECU : FIN ALLUMEUR (envoi un signal de re-armement du relais temporise (necessaire pour le relancer)
+          digitalWrite(ALLUMEUR,       HIGH); // Logiquement c'est deja arrete
           Relance_Relais_Electromodulateur = 0;
         } else { // ALLUMAGE IMPOSSIBLE
           nb_essais_allumage++; // On compte le nb d'essais d'allumage (3 max)
           ArreterActionneurs(); // on coupe tout
           AfficherEtat("!!!!! PAS de flammes (ou capteurs incoherents) !!!!!");
-          //delay(22000);
+          // Tentative de relance de l'allumeur
+          
+          /*for(int rel=0; rel < 20; rel++) { 
+            digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+            delay(200); // Etincelles
+            digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+            delay(200); // Repos allumeur
+          }*/
+          
+          delay(3000);
           if(nb_essais_allumage >= 3) { //
             Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
             nb_essais_allumage = 0;
