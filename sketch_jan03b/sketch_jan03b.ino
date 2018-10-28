@@ -1,9 +1,10 @@
 const int ELECTRO_VANNE       = 3;
-const int ALLUMEUR            = 11;
-const int ELECTRO_MODULATEUR  = 8;
-const int EXTRACTEUR          = 9;
 const int IN_ASPI_BAS         = 4;
 const int IN_ASPI_HAUT        = 5;
+const int ELECTRO_MODULATEUR  = 8;
+const int EXTRACTEUR          = 9;
+const int CIRCULATEUR         = 6;
+const int ALLUMEUR            = 11;
 
 // Etats de la chaudiere
 const int CHAUDIERE_OFF_NORMAL        = 0;
@@ -74,9 +75,9 @@ void ArreterActionneurs() {
     digitalWrite(ELECTRO_MODULATEUR,  LOW);  // FIN Relance Electromodulateur GAZ
     delay(5000);
     digitalWrite(EXTRACTEUR,          HIGH); // STOP EXTRACTEUR
-    // Coupe Circulateur
     delay(2000);
     Etat_Extracteur = false;
+    digitalWrite(CIRCULATEUR,          HIGH); // STOP CIRCULATEUR
     LireCapteurs();
 }
 void LireCapteurs() {
@@ -103,6 +104,7 @@ void setup() {
   pinMode(ALLUMEUR,                 OUTPUT);
   pinMode(ELECTRO_MODULATEUR,       OUTPUT);
   pinMode(EXTRACTEUR,               OUTPUT);
+  pinMode(CIRCULATEUR,              OUTPUT);
   pinMode(IN_ASPI_BAS,              INPUT);
   pinMode(IN_ASPI_HAUT,             INPUT);
   
@@ -111,6 +113,7 @@ void setup() {
   digitalWrite(ALLUMEUR,            HIGH);
   digitalWrite(ELECTRO_MODULATEUR,  LOW);
   digitalWrite(EXTRACTEUR,          HIGH);
+  digitalWrite(CIRCULATEUR,         LOW);
 
   // Communication avec le PC
   Serial.begin(9600);
@@ -134,14 +137,14 @@ void setup() {
     digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
     delay(110); // Repos allumeur
   }*/
-    digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
-    delay(1000); // Etincelles
-    digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
+    //digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
+    //delay(1000); // Etincelles
+    //digitalWrite(ALLUMEUR,       HIGH); // STOP relais ALLUMEUR
     //delay(150-allum+10); // Repos allumeur
   
   
   
-  delay(30000); // 30 secondes pour que le Rapbery boot
+  delay(35000); // 30 secondes pour que le Rapbery boot
 
   // temps au lancement
   Temps_Init = millis();
@@ -231,7 +234,9 @@ void loop() {
         Etat_Chaudiere = CHAUDIERE_ALLUMAGE;
         Temps_Allumage = millis();
         // Relais
-        delay(500);
+        digitalWrite(CIRCULATEUR,       LOW); // Lancement CIRCULATEUR
+        delay(1000);
+        // Capteurs vibrations (a faire)
         //digitalWrite(ALLUMEUR,       LOW); // Fin lancement relais ALLUMEUR (mais dure 10 sec)
         //delay(1000);
         digitalWrite(ELECTRO_VANNE,       LOW); // Ouverture Electrovanne GAZ
@@ -240,7 +245,7 @@ void loop() {
         delay(500); // Attente avant re armement relais temporise
         digitalWrite(ELECTRO_MODULATEUR,  LOW); // FIN Lancement Relais Electromodulateur GAZ
         
-        delay(200); // Attente entree gaz dans chaudiere
+        delay(100); // Attente entree gaz dans chaudiere
 
         digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
         delay(300); // Etincelles
@@ -335,6 +340,8 @@ void loop() {
       AfficherEtat("Extinction des flammes");
       digitalWrite(ELECTRO_VANNE,       HIGH);  // Fermeture Electrovanne GAZ
       digitalWrite(ELECTRO_MODULATEUR,  LOW);   // Fin Relance Ralais Electromodulateur GAZ
+      digitalWrite(CIRCULATEUR,       LOW);     // Arret CIRCULATEUR
+
       Etat_Chaudiere = CHAUDIERE_EXTINCTION;
       Temps_Extinction = millis();
       delay(1000);
@@ -362,6 +369,8 @@ void loop() {
         AfficherEtat("!!!!! Extinction flammes IMPOSSIBLE (ou capteurs incoherents) => ALARME !!!!!");
         Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
       }
+      // Test arret CIRCULATEUR (absence de vibrations) a faire
+      
     }
     
     // TEST FIN REFROIDISSEMENT
