@@ -26,6 +26,7 @@ import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 import java.awt.Color;
 import java.awt.Font;
+import java.time.LocalDateTime;
 import javax.swing.JLabel;
 
 import javax.swing.table.DefaultTableModel;
@@ -118,14 +119,14 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
         
     }
     public void EnvoiConsigne(int c) {
-        System.out.println("EnvoiConsigne:"+c);
+        System.out.println("EnvoiConsigne a "+LocalDateTime.now().getHour()+"h"+LocalDateTime.now().getMinute()+"m"+LocalDateTime.now().getSecond()+"s = "+c);
 
         try {
                 outStream.write(c);
             } catch (IOException ex) {
                 System.out.println("*** Exception dans TimerTask::run");
             }
-        System.out.println("FIN EnvoiConsigne:"+c);
+        System.out.println("FIN EnvoiConsigne a "+LocalDateTime.now().getHour()+"h"+LocalDateTime.now().getMinute()+"m"+LocalDateTime.now().getSecond()+"s");
     }
     // Timer
     Timer timer = new Timer();
