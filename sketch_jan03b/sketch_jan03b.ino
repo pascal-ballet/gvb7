@@ -113,7 +113,7 @@ void setup() {
   digitalWrite(ALLUMEUR,            HIGH);
   digitalWrite(ELECTRO_MODULATEUR,  LOW);
   digitalWrite(EXTRACTEUR,          HIGH);
-  digitalWrite(CIRCULATEUR,         LOW);
+  digitalWrite(CIRCULATEUR,         HIGH);
 
   // Communication avec le PC
   Serial.begin(9600);
@@ -182,6 +182,8 @@ void loop() {
 
       // Lecture des capteurs
       LireCapteurs();
+      //Serial.print("Vibration = ");
+      //Serial.println( analogRead(A4) );
     //Val_Capt_Flamme = analogRead(A0);
     //Val_Capt_Flamme_Gauche   = analogRead(A2);
     //int flotte = analogRead(A1);
@@ -245,7 +247,7 @@ void loop() {
         delay(500); // Attente avant re armement relais temporise
         digitalWrite(ELECTRO_MODULATEUR,  LOW); // FIN Lancement Relais Electromodulateur GAZ
         
-        delay(100); // Attente entree gaz dans chaudiere
+        //delay(100); // Attente entree gaz dans chaudiere
 
         digitalWrite(ALLUMEUR,       LOW); // Lancement relais ALLUMEUR
         delay(300); // Etincelles
@@ -363,6 +365,7 @@ void loop() {
         Temps_Refroidis = millis();
         delay(2000);
         digitalWrite(EXTRACTEUR,       HIGH);  // Arret Extracteur
+        delay(2000); // Attente descente par gravite capteur extraction
         Etat_Extracteur = false;
         AfficherEtat("Infos Arret EXTRACTEUR");
       } else {

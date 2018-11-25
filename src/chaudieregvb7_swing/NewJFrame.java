@@ -118,11 +118,14 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
         
     }
     public void EnvoiConsigne(int c) {
+        System.out.println("EnvoiConsigne:"+c);
+
         try {
                 outStream.write(c);
             } catch (IOException ex) {
                 System.out.println("*** Exception dans TimerTask::run");
             }
+        System.out.println("FIN EnvoiConsigne:"+c);
     }
     // Timer
     Timer timer = new Timer();
