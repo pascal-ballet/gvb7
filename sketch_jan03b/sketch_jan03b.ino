@@ -159,7 +159,7 @@ void loop() {
     //Serial.println(incomingByte);
     consigne = (int) incomingByte;
     if(consigne > 25) consigne = 25;
-    if(consigne == 0)   Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
+    if(consigne <= 0)   Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
     if(consigne == 1) {
       ArreterActionneurs();
       Temps_Init = millis();
@@ -403,14 +403,20 @@ void loop() {
     AfficherEtat("!!!!! INCOHERENCE : devrait refroidir MAIS flamme (capteurs flamme incoherents ?) !!!!!");
     Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
   }
-  if(Etat_Chaudiere == CHAUDIERE_ON_CHAUFFE && abs(Val_Capt_Temperature_Eau - Val_Capt_Temperature_Eau_Bas) > 30 ) { // CAPTEURS DE TEMPERATURE D'EAU TROP DIFFERENTS
-    AfficherEtat("!!!!! PB CAPTEURS TEMPERATURE EAU : ECART > 30 degres !!!!!");
+  if(Etat_Chaudiere == CHAUDIERE_ON_CHAUFFE && abs(Val_Capt_Temperature_Eau - Val_Capt_Temperature_Eau_Bas) > 30 && ((millis() - Temps_Chauffe) > 60000)) { // CAPTEURS DE TEMPERATURE D'EAU TROP DIFFERENTS
+    AfficherEtat("!!!!! PB CAPTEURS TEMPERATURE EAU : ECART > 30 degres apres 60 sec de chauffe !!!!!");
     Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
   }
   if( Etat_Chaudiere == CHAUDIERE_ON_CHAUFFE  &&   Val_Capt_Temperature_Eau <=  Temperature_Init + 5 && ((millis() - Temps_Chauffe) > 15000) ) {
     AfficherEtat("!!!!! PB CHAUDIERE EN CHAUFFE DEPUIS 15 sec MAIS DELTA-CHAUFFE < 5° (PB CIRCULATEUR ?) !!!!!");
     Etat_Chaudiere = CHAUDIERE_ON_ERREUR;    
   }
+  int temperature_extinction_MAX = 40 + 3*(26-16);
+  if( Val_Capt_Temperature_Eau > temperature_extinction_MAX || Val_Capt_Temperature_Eau_Bas > temperature_extinction_MAX) {
+    AfficherEtat("!!!!! PB CHAUDIERE EN SUR-CHAUFFE  !!!!!");
+    Etat_Chaudiere = CHAUDIERE_ON_ERREUR;    
+  }
+
 
    
   // ************TRAITEMENT URGENCE************
