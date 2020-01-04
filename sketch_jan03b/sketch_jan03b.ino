@@ -87,9 +87,16 @@ void LireCapteurs() {
     //int flotte = analogRead(A1);
     Val_Capt_Temperature_Eau     = (int) (135.0f - 1.1f*analogRead(A1));
     Val_Capt_Temperature_Eau_Bas = (int) (135.0f - 1.1f*analogRead(A3));
-    //for(int j=0; j<100;j++) {
-    Val_Capt_Aspi_Bas  = digitalRead(IN_ASPI_BAS);
-    Val_Capt_Aspi_Haut = digitalRead(IN_ASPI_HAUT);
+    Val_Capt_Aspi_Bas = 0;
+    Val_Capt_Aspi_Haut = 0;
+    
+    for(int j=0; j<100;j++) { // anti rebond
+      Val_Capt_Aspi_Bas  += digitalRead(IN_ASPI_BAS);
+      Val_Capt_Aspi_Haut += digitalRead(IN_ASPI_HAUT);
+      delay(2);
+    }
+    Val_Capt_Aspi_Bas = Val_Capt_Aspi_Bas / 100;
+    Val_Capt_Aspi_Haut = Val_Capt_Aspi_Haut / 100;
 }
 //int Thermistor(int RawADC) {
 // return 135-RawADC;
@@ -367,6 +374,7 @@ void loop() {
         digitalWrite(EXTRACTEUR,       HIGH);  // Arret Extracteur
         delay(2000); // Attente descente par gravite capteur extraction
         Etat_Extracteur = false;
+        LireCapteurs();
         AfficherEtat("Infos Arret EXTRACTEUR");
       } else {
         AfficherEtat("!!!!! Extinction flammes IMPOSSIBLE (ou capteurs incoherents) => ALARME !!!!!");
