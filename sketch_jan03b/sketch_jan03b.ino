@@ -92,16 +92,16 @@ void LireCapteurs() {
     Val_Capt_Aspi_Bas = 0;
     Val_Capt_Aspi_Haut = 0;
     
-    for(int j=0; j<100;j++) { // anti rebond
+    //for(int j=0; j<100;j++) { // anti rebond
       Val_Capt_Aspi_Bas  += digitalRead(IN_ASPI_BAS);
       Val_Capt_Aspi_Haut += digitalRead(IN_ASPI_HAUT);
-      delay(2);
+      //delay(2);
 
-    }
-    Serial.print(Val_Capt_Aspi_Bas); Serial.print("-");
-    Serial.println(Val_Capt_Aspi_Haut);
-    Val_Capt_Aspi_Bas = Val_Capt_Aspi_Bas / 100;
-    Val_Capt_Aspi_Haut = Val_Capt_Aspi_Haut / 100;
+    //}
+    //Serial.print(Val_Capt_Aspi_Bas); Serial.print("-");
+    //Serial.println(Val_Capt_Aspi_Haut);
+    //Val_Capt_Aspi_Bas = Val_Capt_Aspi_Bas / 100;
+    //Val_Capt_Aspi_Haut = Val_Capt_Aspi_Haut / 100;
 }
 //int Thermistor(int RawADC) {
 // return 135-RawADC;
@@ -233,11 +233,20 @@ void loop() {
         }
         if(Etat_Extracteur == false && Val_Capt_Aspi_Bas == 1 && Val_Capt_Aspi_Haut == 0 ) {
           AfficherEtat("!!!!! Capteur Aspiration ON alors qu'il devrait etre a OFF (raisons: capteur bloqué, moteur d'extraction en route alors qu'il devrait etre eteint) !!!!!");
-          Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
+          nb_err_aspi++; Serial.print("nb_err_aspi="); Serial.println(nb_err_aspi);
+          if(nb_err_aspi >= 10) { // 10 sec max sans aspi !!! Risque CO !!!
+            Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
+          }
+        }
+        if(Etat_Extracteur == false && Val_Capt_Aspi_Bas == 0 && Val_Capt_Aspi_Haut == 1 ) {
+          nb_err_aspi=0; //Serial.println("aspi OK");
         }
         if( Val_Capt_Aspi_Bas == Val_Capt_Aspi_Haut ) {
           AfficherEtat("!!!!! CAPTEUR d'aspiration PROBLEME !!!!!");
-          Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
+          nb_err_aspi++; Serial.print("nb_err_aspi="); Serial.println(nb_err_aspi);
+          if(nb_err_aspi >= 10) { // 10 sec max sans aspi !!! Risque CO !!!
+            Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
+          }
         }
       
       }
