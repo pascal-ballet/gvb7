@@ -46,6 +46,8 @@ int Relance_Relais_Electromodulateur = 0;
 // Variable de la temperature juste avant chauffe (sert pour detecter une absence de chauffe => pb possible de circulateur)
 int Temperature_Init = 0;
 
+// 10 secondes max sans aspi (risque CO)
+int nb_err_aspi = 0;
 
 void AfficherEtat(String msg) {
     Serial.println(msg);
@@ -94,7 +96,10 @@ void LireCapteurs() {
       Val_Capt_Aspi_Bas  += digitalRead(IN_ASPI_BAS);
       Val_Capt_Aspi_Haut += digitalRead(IN_ASPI_HAUT);
       delay(2);
+
     }
+    Serial.print(Val_Capt_Aspi_Bas); Serial.print("-");
+    Serial.println(Val_Capt_Aspi_Haut);
     Val_Capt_Aspi_Bas = Val_Capt_Aspi_Bas / 100;
     Val_Capt_Aspi_Haut = Val_Capt_Aspi_Haut / 100;
 }
@@ -151,7 +156,7 @@ void setup() {
   
   
   
-  delay(35000); // 30 secondes pour que le Rapbery boot
+  ///delay(35000); // 30 secondes pour que le Rapbery boot
 
   // temps au lancement
   Temps_Init = millis();
@@ -217,8 +222,14 @@ void loop() {
       // Test de l'aspiration de l'air (CO)
       if( Etat_Chaudiere < 10 ) { // Etats < 10 PAS ENCORE EN ERREUR : le devient si l'aspi n'est pas presente
         if(Etat_Extracteur == true && Val_Capt_Aspi_Bas == 0 && Val_Capt_Aspi_Haut == 1 ) {
-          AfficherEtat("!!!!! PAS d'aspiration !!!!!");
-          Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
+          AfficherEtat("!!!!! PAS d'aspiration !!!!!" );
+          nb_err_aspi++; Serial.print("nb_err_aspi="); Serial.println(nb_err_aspi);
+          if(nb_err_aspi >= 10) { // 10 sec max sans aspi !!! Risque CO !!!
+            Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
+          }
+        }
+        if(Etat_Extracteur == true && Val_Capt_Aspi_Bas == 1 && Val_Capt_Aspi_Haut == 0 ) {
+          nb_err_aspi=0; //Serial.println("aspi OK");
         }
         if(Etat_Extracteur == false && Val_Capt_Aspi_Bas == 1 && Val_Capt_Aspi_Haut == 0 ) {
           AfficherEtat("!!!!! Capteur Aspiration ON alors qu'il devrait etre a OFF (raisons: capteur bloqué, moteur d'extraction en route alors qu'il devrait etre eteint) !!!!!");
@@ -415,8 +426,8 @@ void loop() {
     AfficherEtat("!!!!! PB CAPTEURS TEMPERATURE EAU : ECART > 30 degres apres 60 sec de chauffe !!!!!");
     Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
   }
-  if( Etat_Chaudiere == CHAUDIERE_ON_CHAUFFE  &&   Val_Capt_Temperature_Eau <=  Temperature_Init + 5 && ((millis() - Temps_Chauffe) > 15000) ) {
-    AfficherEtat("!!!!! PB CHAUDIERE EN CHAUFFE DEPUIS 15 sec MAIS DELTA-CHAUFFE < 5° (PB CIRCULATEUR ?) !!!!!");
+  if( Etat_Chaudiere == CHAUDIERE_ON_CHAUFFE  &&   Val_Capt_Temperature_Eau <=  Temperature_Init + 5 && ((millis() - Temps_Chauffe) > 25000) ) {
+    AfficherEtat("!!!!! PB CHAUDIERE EN CHAUFFE DEPUIS 25 sec MAIS DELTA-CHAUFFE < 5° (PB CIRCULATEUR ?) !!!!!");
     Etat_Chaudiere = CHAUDIERE_ON_ERREUR;    
   }
   int temperature_extinction_MAX = 40 + 3*(26-16);
