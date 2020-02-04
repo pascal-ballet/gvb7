@@ -72,8 +72,11 @@ void AfficherEtat(String msg) {
 
 void ArreterActionneurs() {
     // Coupe ElectroVanne + ElectroRegulateur
+    delay(1000);
     digitalWrite(ELECTRO_VANNE,       HIGH) ;  // Fermeture Electrovanne GAZ
+    delay(1000);
     digitalWrite(ALLUMEUR,            HIGH); // FIN ALLUMEUR
+    delay(1000);
     digitalWrite(ELECTRO_MODULATEUR,  LOW);  // FIN Relance Electromodulateur GAZ
     delay(5000);
     digitalWrite(EXTRACTEUR,          HIGH); // STOP EXTRACTEUR
@@ -459,6 +462,10 @@ void loop() {
       AfficherEtat("!!!!! Infos apres ERREUR : !!!!!");
       Etat_Chaudiere = CHAUDIERE_ARRET_ERREUR;
   }
+  if( Etat_Chaudiere == CHAUDIERE_ON_ERREUR || Etat_Chaudiere == CHAUDIERE_OFF_ERREUR || Etat_Chaudiere == CHAUDIERE_ARRET_ERREUR) {
+    ArreterActionneurs(); // On insiste !
+  }
+  
   //Serial.print("ETAT = ");   Serial.println(Etat_Chaudiere);
   //Serial.print("Flamme = "); Serial.println(Val_Capt_Flamme);
   delay(500);
