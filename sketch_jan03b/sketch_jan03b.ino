@@ -38,7 +38,7 @@ unsigned long Temps_Extinction  = 0;
 unsigned long Temps_Refroidis   = 0;
 
 // Tentatives d'allumages
-int nb_essais_allumage = 0;
+// int nb_essais_allumage = 0;
 
 // Variable de relance de l'electromodulateur
 int Relance_Relais_Electromodulateur = 0;
@@ -190,7 +190,6 @@ void loop() {
       Temps_Init = millis();
       Etat_Chaudiere = CHAUDIERE_OFF_NORMAL;
     }
-
   }
 
     //do {
@@ -314,7 +313,7 @@ void loop() {
       
         // Test de l'allumage
         if(Val_Capt_Flamme < 750 && Val_Capt_Flamme_Gauche < 750 ) { // || Val_Capt_Flamme < 10
-          nb_essais_allumage = 0;
+          // nb_essais_allumage = 0;
           AfficherEtat("Flammes OK");
           Etat_Chaudiere = CHAUDIERE_ON_CHAUFFE;
           Temps_Chauffe = millis();
@@ -325,7 +324,7 @@ void loop() {
           digitalWrite(ALLUMEUR,       HIGH); // Logiquement c'est deja arrete
           Relance_Relais_Electromodulateur = 0;
         } else { // ALLUMAGE IMPOSSIBLE
-          nb_essais_allumage++; // On compte le nb d'essais d'allumage (3 max)
+          // nb_essais_allumage++; // On compte le nb d'essais d'allumage (3 max)
           ArreterActionneurs(); // on coupe tout
           AfficherEtat("!!!!! PAS de flammes (ou capteurs incoherents) !!!!!");
           // Tentative de relance de l'allumeur
@@ -337,14 +336,14 @@ void loop() {
             delay(200); // Repos allumeur
           }*/
           
-          delay(3000);
-          if(nb_essais_allumage >= 3) { //
+          delay(300);
+          //if(nb_essais_allumage >= 3) { //
             Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
-            nb_essais_allumage = 0;
-          } else {
-            Temps_Init = millis(); // Tps re initialise
-            Etat_Chaudiere = CHAUDIERE_OFF_NORMAL; // pret pour un autre essai
-          }
+          //  nb_essais_allumage = 0;
+          //} else {
+          //  Temps_Init = millis(); // Tps re initialise
+          //  Etat_Chaudiere = CHAUDIERE_OFF_NORMAL; // pret pour un autre essai
+          //}
         }
       }
     //} while(Etat_Chaudiere != CHAUDIERE_ON_ERREUR);
@@ -449,7 +448,7 @@ void loop() {
   }
 
 
-   
+  
   // ************TRAITEMENT URGENCE************
   if( Etat_Chaudiere == CHAUDIERE_ON_ERREUR ) {
     // ARRET D'URGENCE de la chaudiere
