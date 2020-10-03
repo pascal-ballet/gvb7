@@ -114,7 +114,7 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
                 }
 
         };
-        timer.schedule(task,5000l, 60000l); // Lance le timer après 5 sec puis s'execute toutes les minutes (60 000)
+        timer.schedule(task,5000l, 6000l); // Lance le timer après 5 sec puis s'execute toutes les m6 sec (6 000)
 
         
     }
@@ -922,7 +922,7 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
                     String inputLine = input.readLine();
                     if(inputLine != null) {
                         txt_service.append( inputLine + "\n" );
-                        if(jToggleREC.isSelected() == false && !(txt_service.getText().length() < 2048) ) {
+                        if(jToggleREC.isSelected() == false && !(txt_service.getText().length() < 4096) ) {
                             txt_service.setText(txt_service.getText(1023, 1024));
                         }
                     }
