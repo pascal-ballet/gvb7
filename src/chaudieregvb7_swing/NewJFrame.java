@@ -108,9 +108,30 @@ public class NewJFrame extends javax.swing.JFrame { //implements SerialPortEvent
                     if(timerState == 1) {
                         //Envoi de la consigne a l'arduino
                         int consigne = _consignes[heure];
-                        System.out.println("Heure=" + heure + ", Consigne=" + consigne );
-                        EnvoiConsigne(consigne);
+                        if(consigne != _old_consigne) {
+                            System.out.println("Heure=" + heure + ", Consigne=" + consigne );
+                            EnvoiConsigne(consigne);
+                            _old_consigne = consigne;
+                        }
                     }
+                    if(timerState == 0) {
+                        //Envoi de la consigne a l'arduino
+                        if(0 != _old_consigne) {
+                            System.out.println("Heure=" + heure + ", Consigne=0" );
+                            EnvoiConsigne(0);
+                            _old_consigne = 0;
+                        }
+                    }
+                    if(timerState == 2) { // RESTART chaudiere
+                        //Envoi de la consigne a l'arduino
+                        if(1 != _old_consigne) {
+                            System.out.println("Heure=" + heure + ", Consigne=1" );
+                            EnvoiConsigne(1);
+                            _old_consigne = 1;
+                            timerState = 1;
+                        }
+                    }
+                    
                     
             // Read msg from arduino
             try {
@@ -144,6 +165,7 @@ public class NewJFrame extends javax.swing.JFrame { //implements SerialPortEvent
 
         
     }
+    int _old_consigne = 0;
     public void EnvoiConsigne(int c) {
         System.out.println("EnvoiConsigne a "+LocalDateTime.now().getHour()+"h"+LocalDateTime.now().getMinute()+"m"+LocalDateTime.now().getSecond()+"s = "+c);
 
@@ -752,7 +774,7 @@ public class NewJFrame extends javax.swing.JFrame { //implements SerialPortEvent
     private void jButtonONActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonONActionPerformed
         // START
         EnvoiConsigne(1);
-        timerState = 1;
+        timerState = 2;
         jButtonON.setBackground(Color.green);
         jButtonOFF.setBackground(Color.lightGray);
     }//GEN-LAST:event_jButtonONActionPerformed
@@ -891,7 +913,7 @@ public class NewJFrame extends javax.swing.JFrame { //implements SerialPortEvent
             inStream = serialPort.getInputStream();
             
             //serialPort.addEventListener(this);
-            serialPort.notifyOnDataAvailable(false); // old true
+            serialPort.notifyOnDataAvailable(true); // old true
 
         } catch (NoSuchPortException | PortInUseException e) {
             System.out.println("*** Exception dans connect (1ere ligne)");
