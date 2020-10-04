@@ -179,7 +179,7 @@ void loop() {
       ArreterActionneurs();
       Temps_Init = millis();
       Etat_Chaudiere = CHAUDIERE_OFF_NORMAL;
-      consigne = 22;
+      consigne = 16;
     }
     if(consigne == 15 && Etat_Chaudiere != CHAUDIERE_PAUSE) {
       ArreterActionneurs();
@@ -437,7 +437,7 @@ void loop() {
     AfficherEtat("!!!!! PB CAPTEURS TEMPERATURE EAU : ECART > 30 degres apres 60 sec de chauffe !!!!!");
     Etat_Chaudiere = CHAUDIERE_ON_ERREUR;
   }
-  if( Etat_Chaudiere == CHAUDIERE_ON_CHAUFFE  &&   Val_Capt_Temperature_Eau <=  Temperature_Init + 5 && ((millis() - Temps_Chauffe) > 25000) ) {
+  if( Etat_Chaudiere == CHAUDIERE_ON_CHAUFFE  &&   Val_Capt_Temperature_Eau <=  Temperature_Init + 1 && ((millis() - Temps_Chauffe) > 25000) ) {
     AfficherEtat("!!!!! PB CHAUDIERE EN CHAUFFE DEPUIS 25 sec MAIS DELTA-CHAUFFE < 5° (PB CIRCULATEUR ?) !!!!!");
     Etat_Chaudiere = CHAUDIERE_ON_ERREUR;    
   }
