@@ -214,7 +214,7 @@ public class NewJFrame extends javax.swing.JFrame { //implements SerialPortEvent
         jLabel1.setText("PROGRAMME :");
 
         jComboBox1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TRAVAIL 1", "TRAVAIL 2", "PRESENCE", "HORS GEL", "MINIMUM", "MAXIMUM" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TRAVAIL 1", "TRAVAIL 2", "PRESENCE", "HORS GEL", "ZERO", "MAXIMUM" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -847,7 +847,7 @@ public class NewJFrame extends javax.swing.JFrame { //implements SerialPortEvent
             for(int h=0; h<24; h++)
                 _consignes[h] = 16;
         }
-        if(consigne.equals("MINIMUM")) {
+        if(consigne.equals("ZERO")) {
             for(int h=0; h<24; h++)
                 _consignes[h] = 15;
         }

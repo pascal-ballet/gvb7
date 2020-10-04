@@ -113,7 +113,7 @@
                     <StringItem index="1" value="TRAVAIL 2"/>
                     <StringItem index="2" value="PRESENCE"/>
                     <StringItem index="3" value="HORS GEL"/>
-                    <StringItem index="4" value="MINIMUM"/>
+                    <StringItem index="4" value="ZERO"/>
                     <StringItem index="5" value="MAXIMUM"/>
                   </StringArray>
                 </Property>
