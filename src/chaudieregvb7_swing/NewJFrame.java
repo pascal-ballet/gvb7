@@ -35,7 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  * @author user
  */
-public class NewJFrame extends javax.swing.JFrame implements SerialPortEventListener {
+public class NewJFrame extends javax.swing.JFrame { //implements SerialPortEventListener {
 
     /**
      * Creates new form NewJFrame
@@ -76,7 +76,6 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
         panelConsigne24._h = 23;
         _consignes = new int[nb_heures];
         SetConsignes("TRAVAIL 1");
-        
 
 
         // Communication avec l'Arduino
@@ -112,10 +111,36 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
                         System.out.println("Heure=" + heure + ", Consigne=" + consigne );
                         EnvoiConsigne(consigne);
                     }
+                    
+            // Read msg from arduino
+            try {
+                if(input.ready()) {
+                //boolean hasData = false;
+                //do {
+                //    hasData = false;
+                    String inputLine = input.readLine(); // BLOQUAIT PARFOIS
+                    if(inputLine != null && inputLine.length() > 0) {
+                        txt_service.append( inputLine + "\n" );
+                        if(NOScroll.isSelected() == false ) {
+                            txt_service.setCaretPosition(txt_service.getText().length());
+                        }
+                        // Si trop de msg vide la textarea
+                        if(txt_service.getText().length() >= 16383) {
+                            txt_service.setText("");
+ 
+                        }
+                    }
+                //} while(hasData == true);
+                    //System.out.println(inputLine);
+            }
+            } catch (Exception e) {
+                    System.out.println("*** Exception dans serialEvent)");
+                    System.err.println(e.toString());
+            }
                 }
 
         };
-        timer.schedule(task,5000l, 1000l); // Lance le timer après 5 sec puis s'execute toutes les 1 sec (6 000)
+        timer.schedule(task,5000l, 100l); // Lance le timer après 5 sec puis s'execute toutes les 1 sec (6 000)
 
         
     }
@@ -178,7 +203,7 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txt_service = new javax.swing.JTextArea();
-        jToggleREC = new javax.swing.JToggleButton();
+        NOScroll = new javax.swing.JToggleButton();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -678,9 +703,9 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
         jPanel2.add(jScrollPane2);
         jScrollPane2.setBounds(100, 10, 910, 530);
 
-        jToggleREC.setText("REC");
-        jPanel2.add(jToggleREC);
-        jToggleREC.setBounds(0, 90, 100, 50);
+        NOScroll.setText("NO Scroll");
+        jPanel2.add(NOScroll);
+        NOScroll.setBounds(0, 90, 100, 50);
 
         jButton1.setText("Clear");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -865,8 +890,8 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
             input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
             inStream = serialPort.getInputStream();
             
-            serialPort.addEventListener(this);
-            serialPort.notifyOnDataAvailable(true);
+            //serialPort.addEventListener(this);
+            serialPort.notifyOnDataAvailable(false); // old true
 
         } catch (NoSuchPortException | PortInUseException e) {
             System.out.println("*** Exception dans connect (1ere ligne)");
@@ -916,13 +941,13 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
         }
     }    
 
-    @Override
+    /*@Override
     public synchronized void serialEvent(SerialPortEvent spe) {
    
-        if (spe.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+        //if (spe.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
                     String inputLine = input.readLine();
-                    if(inputLine != null) {
+                    if(inputLine != null && inputLine.length() > 0) {
                         txt_service.append( inputLine + "\n" );
                         if(jToggleREC.isSelected() == false && !(txt_service.getText().length() < 4096) ) {
                             txt_service.setText(txt_service.getText(1023, 1024));
@@ -933,9 +958,9 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
                     System.out.println("*** Exception dans serialEvent)");
                     System.err.println(e.toString());
             }
-        }
+        //}
 	// Ignore all the other eventTypes, but you should consider the other one
-    }
+    }*/
     
         
     
@@ -985,6 +1010,7 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton NOScroll;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonOFF;
     private javax.swing.JButton jButtonON;
@@ -998,7 +1024,6 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JToggleButton jToggleREC;
     private chaudieregvb7_swing.PanelConsigne panelConsigne1;
     private chaudieregvb7_swing.PanelConsigne panelConsigne10;
     private chaudieregvb7_swing.PanelConsigne panelConsigne11;
