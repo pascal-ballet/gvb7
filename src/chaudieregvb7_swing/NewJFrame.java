@@ -98,11 +98,12 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
                     Calendar calendar = Calendar.getInstance();
                     int heure = calendar.get(Calendar.HOUR_OF_DAY);
 
-                    if(_heureCourante != heure) {
+                    //if(_heureCourante != heure) {
                         _heureCourante = heure;
-                        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
-                        model.setValueAt("O",0,0);
-                    }
+                        //DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+                        jTable1.changeSelection(0, heure,true, false);
+                        //model.setValueAt("O",0,0);
+                    //}
                     
                     
                     if(timerState == 1) {
@@ -114,7 +115,7 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
                 }
 
         };
-        timer.schedule(task,5000l, 6000l); // Lance le timer après 5 sec puis s'execute toutes les m6 sec (6 000)
+        timer.schedule(task,5000l, 1000l); // Lance le timer après 5 sec puis s'execute toutes les 1 sec (6 000)
 
         
     }
@@ -201,7 +202,7 @@ public class NewJFrame extends javax.swing.JFrame implements SerialPortEventList
         jTable1.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"O", "", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
+                {"", "", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
                 "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"
